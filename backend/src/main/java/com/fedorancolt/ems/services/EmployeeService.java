@@ -2,6 +2,12 @@ package com.fedorancolt.ems.services;
 
 import com.fedorancolt.ems.entities.Employee;
 import com.fedorancolt.ems.exceptions.EmployeeDoesNotExist;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -9,9 +15,11 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class EmployeeService {
+@RequiredArgsConstructor
+public class EmployeeService implements UserDetailsService {
 
     private Map<String, Employee> employees;
+    private final PasswordEncoder passwordEncoder;
 
     public Employee createEmployee(String firstName, String lastName, String password) {
         String email = firstName + lastName + "@company.com";
@@ -78,5 +86,20 @@ public class EmployeeService {
                 .email("employeeone@company.com")
                 .password("pass")
                 .build());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        try {
+            Employee employee = readEmployeeByEmail(username);
+
+            return User.builder()
+                    .username(employee.getEmail())
+                    .password(passwordEncoder.encode(employee.getPassword()))
+                    .roles("EMPLOYEE")
+                    .build();
+        } catch (EmployeeDoesNotExist e) {
+            throw new UsernameNotFoundException("Employee does not exist");
+        }
     }
 }
