@@ -1,4 +1,4 @@
-package com.fedorancolt.employee_management_system.dtos;
+package com.fedorancolt.ems.dtos;
 
 import lombok.Builder;
 

@@ -1,10 +1,10 @@
-package com.fedorancolt.employee_management_system.controllers;
+package com.fedorancolt.ems.controllers;
 
-import com.fedorancolt.employee_management_system.dtos.CreateEmployeeRequest;
-import com.fedorancolt.employee_management_system.dtos.UpdateEmployeeRequest;
-import com.fedorancolt.employee_management_system.entities.Employee;
-import com.fedorancolt.employee_management_system.exceptions.EmployeeDoesNotExist;
-import com.fedorancolt.employee_management_system.services.EmployeeService;
+import com.fedorancolt.ems.dtos.CreateEmployeeRequest;
+import com.fedorancolt.ems.dtos.UpdateEmployeeRequest;
+import com.fedorancolt.ems.entities.Employee;
+import com.fedorancolt.ems.exceptions.EmployeeDoesNotExist;
+import com.fedorancolt.ems.services.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

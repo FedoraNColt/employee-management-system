@@ -1,6 +1,6 @@
-package com.fedorancolt.employee_management_system;
+package com.fedorancolt.ems;
 
-import com.fedorancolt.employee_management_system.services.EmployeeService;
+import com.fedorancolt.ems.services.EmployeeService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

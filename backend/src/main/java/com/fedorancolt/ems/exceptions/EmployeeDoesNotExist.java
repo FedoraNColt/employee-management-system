@@ -1,4 +1,4 @@
-package com.fedorancolt.employee_management_system.exceptions;
+package com.fedorancolt.ems.exceptions;
 
 public class EmployeeDoesNotExist extends RuntimeException {
 

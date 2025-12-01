@@ -1,7 +1,7 @@
-package com.fedorancolt.employee_management_system.services;
+package com.fedorancolt.ems.services;
 
-import com.fedorancolt.employee_management_system.entities.Employee;
-import com.fedorancolt.employee_management_system.exceptions.EmployeeDoesNotExist;
+import com.fedorancolt.ems.entities.Employee;
+import com.fedorancolt.ems.exceptions.EmployeeDoesNotExist;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;

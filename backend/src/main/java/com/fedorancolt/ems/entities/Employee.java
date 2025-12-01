@@ -1,4 +1,4 @@
-package com.fedorancolt.employee_management_system.entities;
+package com.fedorancolt.ems.entities;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
