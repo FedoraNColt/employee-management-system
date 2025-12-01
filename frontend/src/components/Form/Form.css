@@ -1,0 +1,43 @@
+.employee-management-form {
+  padding: 1rem;
+  border-radius: var(--border-large);
+  box-shadow: var(--box-shadow);
+  background-color: var(--foreground);
+}
+
+.employee-management-form-border {
+  border: 1px solid var(--border-color);
+}
+
+.employee-management-form-border-error {
+  border: 1px solid var(--error-red);
+}
+
+.employee-management-form-label {
+  padding-bottom: 0.5rem;
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.employee-management-form-input {
+  width: 100%;
+  padding: 0.5rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-small);
+}
+
+.employee-management-form-input:focus {
+  outline: none;
+  border: 2px solid var(--secondary);
+  padding: 0.438rem;
+}
+
+.employee-management-form-input::placeholder {
+  color: var(--border-color);
+  font-weight: 400;
+}
