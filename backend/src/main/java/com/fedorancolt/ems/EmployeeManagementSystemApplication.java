@@ -1,6 +1,6 @@
 package com.fedorancolt.ems;
 
-import com.fedorancolt.ems.services.EmployeeService;
+import com.fedorancolt.ems.services.AuthenticationService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,9 +14,9 @@ public class EmployeeManagementSystemApplication {
 	}
 
     @Bean
-    CommandLineRunner runner(EmployeeService employeeService) {
+    CommandLineRunner run(AuthenticationService authService) {
         return (args) -> {
-            employeeService.loadEmployees();
+            authService.loadUserInfo();
         };
     }
 }

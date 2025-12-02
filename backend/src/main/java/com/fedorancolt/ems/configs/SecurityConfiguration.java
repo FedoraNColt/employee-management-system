@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.RequestCacheConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -73,17 +74,30 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 // Allow calls from the configured frontend origin
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .securityContext(context -> context.securityContextRepository(securityContextRepository()))
                 .requestCache(RequestCacheConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(unprotectedRoutes()).permitAll()
+                        .requestMatchers(adminRoutes()).hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .build();
     }
 
     private static AntPathRequestMatcher[] unprotectedRoutes() {
         return new AntPathRequestMatcher[] {
-                new AntPathRequestMatcher("/auth/**")
+                new AntPathRequestMatcher("/auth/login"),
+                new AntPathRequestMatcher("/h2-console/**")
+        };
+    }
+
+    private static AntPathRequestMatcher[] adminRoutes() {
+        return new AntPathRequestMatcher[] {
+                new AntPathRequestMatcher("/auth/register"),
+                new AntPathRequestMatcher("/employee/", "GET"),
+                new AntPathRequestMatcher("/employee/{email}", "DELETE"),
+                new AntPathRequestMatcher("/employee/pay/{email}", "PUT"),
+                new AntPathRequestMatcher("/employee/", "PUT"),
         };
     }
 }
