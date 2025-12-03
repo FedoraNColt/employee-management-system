@@ -1,0 +1,13 @@
+.information-card {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--foreground);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-large);
+  box-shadow: var(--box-shadow);
+  row-gap: 0.5rem;
+}
+
+.information-card h5 {
+  height: 3.125rem;
+}

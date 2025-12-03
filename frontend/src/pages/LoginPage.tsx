@@ -10,8 +10,8 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const navigateToEmployeePortal = useCallback(() => {
-    navigate("/portal/admin/self");
-  }, [navigate]);
+    navigate(`/portal/${employee?.employeeType.toLowerCase()}`);
+  }, [navigate, employee]);
 
   useEffect(() => {
     if (employee) {

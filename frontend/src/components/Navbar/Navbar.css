@@ -1,0 +1,29 @@
+.nav-bar {
+  height: 5rem;
+  padding: 0 2rem;
+  background-color: var(--primary);
+  box-shadow: 0 4px 8px 0px var(--primary);
+}
+
+.nav-bar-logo {
+  height: 100%;
+  padding: 1rem 0;
+}
+
+.nav-bar-links {
+  height: 100%;
+  gap: 0.25rem;
+}
+
+.nav-bar-item {
+  width: fit-content;
+  padding: 0 1rem;
+  border: none;
+  outline: none;
+}
+
+.nav-bar-item:hover {
+  cursor: pointer;
+  background-color: var(--secondary);
+  color: var(--text-secondary);
+}
