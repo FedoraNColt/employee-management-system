@@ -1,6 +1,12 @@
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import type { Employee } from "../types";
-import useAxios from "./useAxios";
+import { apiClient } from "./apiClient";
 import useAuthenticationService, {
   type AuthenticationServiceType,
 } from "./AuthenticationService";
@@ -27,29 +33,25 @@ const useGlobalContext = () => {
 };
 
 function GlobalContextProvider(props: { children: React.ReactNode }) {
-  const axiosRequest = useAxios();
   const [employee, setEmployee] = useState<Employee | undefined>();
   const [employees, setEmployees] = useState<Employee[]>([]);
 
-  const updateEmployee = (employee: Employee) => {
+  const updateEmployee = useCallback((employee: Employee | undefined) => {
     setEmployee(employee);
-  };
+  }, []);
 
-  const updateEmployees = (employees: Employee[]) => {
+  const updateEmployees = useCallback((employees: Employee[]) => {
     setEmployees(employees);
-  };
+  }, []);
 
-  const reducers: GlobalContextReducers = {
-    updateEmployee,
-    updateEmployees,
-  };
-
-  const authenticationService = useAuthenticationService(
-    axiosRequest,
-    reducers
+  const reducers: GlobalContextReducers = useMemo(
+    () => ({ updateEmployee, updateEmployees }),
+    [updateEmployee, updateEmployees]
   );
 
-  const employeeService = useEmployeeService(employee, axiosRequest, reducers);
+  const authenticationService = useAuthenticationService(apiClient, reducers);
+
+  const employeeService = useEmployeeService(employee, apiClient, reducers);
 
   return (
     <GlobalContext.Provider

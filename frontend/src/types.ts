@@ -97,3 +97,11 @@ export interface NewEmployeeLogin {
   email: string;
   temporaryPassword: string;
 }
+
+export interface EditEmployeePayload {
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  employeeType: EmployeeType;
+  reportsTo: string | null;
+}

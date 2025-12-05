@@ -7,12 +7,15 @@ import "./ManageEmployeesPage.css";
 import { useEffect } from "react";
 
 export default function ManageEmployeesPage() {
-  const { employees, authenticationService, employeeService } =
-    useGlobalContext() as GlobalContextType;
+  const {
+    employees,
+    authenticationService,
+    employeeService: { fetchAllEmployees },
+  } = useGlobalContext() as GlobalContextType;
 
   useEffect(() => {
-    employeeService.fetchAllEmployees();
-  }, []);
+    fetchAllEmployees();
+  }, [fetchAllEmployees]);
 
   return (
     <div className="page-container">
