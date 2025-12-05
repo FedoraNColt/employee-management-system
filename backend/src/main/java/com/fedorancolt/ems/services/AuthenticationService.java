@@ -22,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import static com.fedorancolt.ems.util.CredentialUtil.generateEmailAddress;
-import static com.fedorancolt.ems.util.CredentialUtil.generateTemporaryPassword;
+import static com.fedorancolt.ems.util.CredentialsUtil.generateEmailAddress;
+import static com.fedorancolt.ems.util.CredentialsUtil.generateTemporaryPassword;
 
 @Service
 @Transactional
@@ -155,7 +155,7 @@ public class AuthenticationService {
 
         Employee admin = employeeService.createOrUpdateEmployee(
                 Employee.builder()
-                        .email("adminemployee@company.com")
+                        .email("admin.employee@company.com")
                         .password(passwordEncoder.encode("pass"))
                         .employeeType(EmployeeType.ADMIN)
                         .firstName("admin")
@@ -170,7 +170,7 @@ public class AuthenticationService {
 
         Employee manager = employeeService.createOrUpdateEmployee(
                 Employee.builder()
-                        .email("manageremployee@company.com")
+                        .email("manager.employee@company.com")
                         .password(passwordEncoder.encode("pass"))
                         .employeeType(EmployeeType.MANAGER)
                         .firstName("manager")
@@ -185,7 +185,7 @@ public class AuthenticationService {
 
         Employee employee = employeeService.createOrUpdateEmployee(
                 Employee.builder()
-                        .email("employeeone@company.com")
+                        .email("employee.one@company.com")
                         .password(passwordEncoder.encode("pass"))
                         .employeeType(EmployeeType.EMPLOYEE)
                         .firstName("employee")

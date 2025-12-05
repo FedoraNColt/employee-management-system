@@ -2,9 +2,9 @@ package com.fedorancolt.ems.util;
 
 import java.util.UUID;
 
-public class CredentialUtil {
+public class CredentialsUtil {
 
-    private CredentialUtil() {}
+    private CredentialsUtil() {}
 
     public static String generateEmailAddress(String firstName, String lastName) {
         return firstName.toLowerCase() + "." + lastName.toLowerCase() + "@company.com";

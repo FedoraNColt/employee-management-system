@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.fedorancolt.ems.util.CredentialsUtil.generateEmailAddress;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -71,7 +73,7 @@ public class EmployeeService implements UserDetailsService {
             }
         }
 
-        employee.setEmail(employee.getFirstName().toLowerCase() + employee.getLastName().toLowerCase() + "@company.com");
+        employee.setEmail(generateEmailAddress(employee.getFirstName(), employee.getLastName()));
         return employeeRepository.save(employee);
     }
 
