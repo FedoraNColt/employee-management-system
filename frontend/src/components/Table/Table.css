@@ -1,0 +1,38 @@
+.employee-management-table {
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.employee-management-table td,
+.employee-management-table th {
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+}
+
+.employee-management-table tr:nth-child(odd) {
+  background-color: var(--foreground);
+}
+
+.employee-management-table tr:nth-child(even) {
+  background-color: #e7e7e7;
+}
+
+.employee-management-table-row:hover {
+  cursor: pointer;
+  background-color: #ddd !important;
+}
+
+.employee-management-table-header {
+  text-transform: uppercase;
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding: 0.75rem 0;
+}
+
+#employee-management-table-expanded-row {
+  height: fit-content;
+  background-color: transparent;
+}

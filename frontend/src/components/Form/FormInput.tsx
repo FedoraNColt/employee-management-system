@@ -20,7 +20,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   return (
     <div>
       <label htmlFor={name} className="employee-management-form-label">
-        {label}:
+        {label}
       </label>
       <input
         type={type}

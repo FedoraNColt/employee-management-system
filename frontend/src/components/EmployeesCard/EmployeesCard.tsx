@@ -6,6 +6,7 @@ import type { Employee } from "../../types";
 import { Button } from "../Button/Button";
 import { InformationCard } from "../InformationCard/InformationCard";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { EmployeeTable } from "../EmployeeTable/EmployeeTable";
 
 interface EmployeesCardProps {
   header: string;
@@ -39,6 +40,10 @@ export const EmployeesCard: React.FC<EmployeesCardProps> = ({
           </Button>
         )}
       </div>
+      <EmployeeTable
+        employees={employees}
+        displayEditEmployee={displayEditEmployee}
+      />
     </InformationCard>
   );
 };
