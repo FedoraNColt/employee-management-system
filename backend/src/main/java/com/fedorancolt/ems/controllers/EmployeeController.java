@@ -1,10 +1,12 @@
 package com.fedorancolt.ems.controllers;
 
-import com.fedorancolt.ems.dtos.CreateEmployeeRequest;
+import com.fedorancolt.ems.dtos.UpdateContactInformationRequest;
 import com.fedorancolt.ems.dtos.UpdateEmployeeRequest;
+import com.fedorancolt.ems.entities.ContactInformation;
 import com.fedorancolt.ems.entities.Employee;
 import com.fedorancolt.ems.entities.PayInformation;
 import com.fedorancolt.ems.exceptions.EmployeeDoesNotExist;
+import com.fedorancolt.ems.services.ContactInformationService;
 import com.fedorancolt.ems.services.EmployeeService;
 import com.fedorancolt.ems.services.PayInformationService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
     private final PayInformationService payInformationService;
+    private final ContactInformationService contactInformationService;
 
 
     @GetMapping("/")
@@ -49,6 +52,26 @@ public class EmployeeController {
         return employeeService.createOrUpdateEmployee(employee);
     }
 
+    @PutMapping("/contact/{email}")
+    public Employee updateEmployeeContactInformation(
+            @PathVariable("email") String email,
+            @RequestBody UpdateContactInformationRequest request) {
+        Employee employee = employeeService.readEmployeeByEmail(email);
+        ContactInformation contactInfoToUpdate = ContactInformation.builder()
+                .phoneNumber(request.phoneNumber())
+                .addressLineOne(request.addressLineOne())
+                .addressLineTwo(request.addressLineTwo())
+                .city(request.city())
+                .state(request.state())
+                .zipCode(request.zipCode())
+                .build();
+        contactInfoToUpdate.setId(employee.getContactInformation().getId());
+
+        ContactInformation updatedContactInfo = contactInformationService.createContactInformation(contactInfoToUpdate);
+        employee.setContactInformation(updatedContactInfo);
+        return employeeService.createOrUpdateEmployee(employee);
+    }
+
     @DeleteMapping("/{email}")
     public ResponseEntity deleteEmployee(@PathVariable("email") String email) {
         employeeService.deleteEmployee(email);
@@ -60,4 +83,5 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Unable to handle request at this time");
 
     }
+
 }
