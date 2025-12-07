@@ -80,6 +80,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(unprotectedRoutes()).permitAll()
                         .requestMatchers(adminRoutes()).hasRole("ADMIN")
+                        .requestMatchers(employeeRoutes()).hasRole("EMPLOYEE")
                         .anyRequest().authenticated())
                 .build();
     }
@@ -98,6 +99,14 @@ public class SecurityConfiguration {
                 new AntPathRequestMatcher("/employee/{email}", "DELETE"),
                 new AntPathRequestMatcher("/employee/pay/{email}", "PUT"),
                 new AntPathRequestMatcher("/employee/", "PUT"),
+        };
+    }
+
+    public static AntPathRequestMatcher[] employeeRoutes() {
+        return new AntPathRequestMatcher[] {
+                new AntPathRequestMatcher("/timesheet/", "POST"),
+                new AntPathRequestMatcher("/timesheet/hours", "PUT"),
+                new AntPathRequestMatcher("/timesheet/submit/{timeSheetId}", "PUT")
         };
     }
 }
