@@ -22,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-import static com.fedorancolt.ems.util.CredentialsUtil.generateEmailAddress;
-import static com.fedorancolt.ems.util.CredentialsUtil.generateTemporaryPassword;
+import static com.fedorancolt.ems.utils.CredentialsUtils.generateEmailAddress;
+import static com.fedorancolt.ems.utils.CredentialsUtils.generateTemporaryPassword;
 
 @Service
 @Transactional
