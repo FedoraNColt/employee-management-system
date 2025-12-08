@@ -24,12 +24,12 @@ public class BaseEntity {
     private UUID id;
 
     @CreationTimestamp
-    @Column(name = "create_ts")
+    @Column(name = "create_ts", nullable = false, updatable = false)
     @JsonIgnore
     private Instant createdTimeStamp;
 
     @UpdateTimestamp
-    @Column(name = "update_ts")
+    @Column(name = "update_ts", nullable = false)
     @JsonIgnore
     private Instant updatedTimeStamp;
 

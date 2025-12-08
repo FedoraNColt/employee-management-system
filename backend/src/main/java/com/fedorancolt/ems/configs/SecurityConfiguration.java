@@ -106,7 +106,8 @@ public class SecurityConfiguration {
         return new AntPathRequestMatcher[] {
                 new AntPathRequestMatcher("/timesheet/", "POST"),
                 new AntPathRequestMatcher("/timesheet/hours", "PUT"),
-                new AntPathRequestMatcher("/timesheet/submit/{timeSheetId}", "PUT")
+                new AntPathRequestMatcher("/timesheet/submit/{timeSheetId}", "PUT"),
+                new AntPathRequestMatcher("/employee/contact/{email}", "PUT"),
         };
     }
 }

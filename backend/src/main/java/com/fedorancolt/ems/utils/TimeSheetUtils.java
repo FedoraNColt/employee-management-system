@@ -13,7 +13,7 @@ public class TimeSheetUtils {
     private  TimeSheetUtils() {
     }
 
-    public static final List<DayOfWeek> DAYS_OF_WEEK = Arrays.asList(DayOfWeek.values());
+    public static final List<DayOfWeek> DAYS_OF_WEEK = Arrays.asList(DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
 
     public static Integer getDaysSinceSunday(LocalDate currentDate) {
         DayOfWeek currentDay = currentDate.getDayOfWeek();
