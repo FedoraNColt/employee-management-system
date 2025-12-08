@@ -16,7 +16,7 @@ export interface ContactInformation {
   phoneNumber: string;
   addressLineOne: string;
   addressLineTwo: string;
-  state: US_STATES;
+  state: string;
   city: string;
   zipCode: string;
 }
@@ -31,57 +31,105 @@ export type EmployeeType = "ADMIN" | "MANAGER" | "EMPLOYEE";
 
 export type PayType = "SALARY" | "HOURLY";
 
-export type US_STATES =
-  | "AL" // Alabama
-  | "AK" // Alaska
-  | "AZ" // Arizona
-  | "AR" // Arkansas
-  | "CA" // California
-  | "CO" // Colorado
-  | "CT" // Connecticut
-  | "DE" // Delaware
-  | "FL" // Florida
-  | "GA" // Georgia
-  | "HI" // Hawaii
-  | "ID" // Idaho
-  | "IL" // Illinois
-  | "IN" // Indiana
-  | "IA" // Iowa
-  | "KS" // Kansas
-  | "KY" // Kentucky
-  | "LA" // Louisiana
-  | "ME" // Maine
-  | "MD" // Maryland
-  | "MA" // Massachusetts
-  | "MI" // Michigan
-  | "MN" // Minnesota
-  | "MS" // Mississippi
-  | "MO" // Missouri
-  | "MT" // Montana
-  | "NE" // Nebraska
-  | "NV" // Nevada
-  | "NH" // New Hampshire
-  | "NJ" // New Jersey
-  | "NM" // New Mexico
-  | "NY" // New York
-  | "NC" // North Carolina
-  | "ND" // North Dakota
-  | "OH" // Ohio
-  | "OK" // Oklahoma
-  | "OR" // Oregon
-  | "PA" // Pennsylvania
-  | "RI" // Rhode Island
-  | "SC" // South Carolina
-  | "SD" // South Dakota
-  | "TN" // Tennessee
-  | "TX" // Texas
-  | "UT" // Utah
-  | "VT" // Vermont
-  | "VA" // Virginia
-  | "WA" // Washington
-  | "WV" // West Virginia
-  | "WI" // Wisconsin
-  | "WY"; // Wyoming
+export type DayOfWeek =
+  | "SUNDAY"
+  | "MONDAY"
+  | "TUESDAY"
+  | "WEDNESDAY"
+  | "THURSDAY"
+  | "FRIDAY"
+  | "SATURDAY";
+
+export type TimeSheetStatus =
+  | "CREATED"
+  | "SAVED"
+  | "SUBMITTED"
+  | "APPROVED"
+  | "DENIED"
+  | "PAID";
+
+export interface TimeSheetHours {
+  id: string;
+  dayOfWeek: DayOfWeek;
+  date: Date;
+  hours: number;
+}
+
+export interface TimeSheet {
+  id: string;
+  employee: Employee;
+  approver: Employee | null;
+  startDate: Date;
+  endDate: Date;
+  status: TimeSheetStatus;
+  hours: TimeSheetHours[];
+  regularHours: number;
+  overtimeHours: number;
+  message: string;
+}
+
+export const US_STATE_LIST: string[] = [
+  "AL", // Alabama
+  "AK", // Alaska
+  "AZ", // Arizona
+  "AR", // Arkansas
+  "CA", // California
+  "CO", // Colorado
+  "CT", // Connecticut
+  "DE", // Delaware
+  "FL", // Florida
+  "GA", // Georgia
+  "HI", // Hawaii
+  "ID", // Idaho
+  "IL", // Illinois
+  "IN", // Indiana
+  "IA", // Iowa
+  "KS", // Kansas
+  "KY", // Kentucky
+  "LA", // Louisiana
+  "ME", // Maine
+  "MD", // Maryland
+  "MA", // Massachusetts
+  "MI", // Michigan
+  "MN", // Minnesota
+  "MS", // Mississippi
+  "MO", // Missouri
+  "MT", // Montana
+  "NE", // Nebraska
+  "NV", // Nevada
+  "NH", // New Hampshire
+  "NJ", // New Jersey
+  "NM", // New Mexico
+  "NY", // New York
+  "NC", // North Carolina
+  "ND", // North Dakota
+  "OH", // Ohio
+  "OK", // Oklahoma
+  "OR", // Oregon
+  "PA", // Pennsylvania
+  "RI", // Rhode Island
+  "SC", // South Carolina
+  "SD", // South Dakota
+  "TN", // Tennessee
+  "TX", // Texas
+  "UT", // Utah
+  "VT", // Vermont
+  "VA", // Virginia
+  "WA", // Washington
+  "WV", // West Virginia
+  "WI", // Wisconsin
+  "WY", // Wyoming
+];
+
+export const DAY_OF_WEEK_LIST = [
+  "SUNDAY",
+  "MONDAY",
+  "TUESDAY",
+  "WEDNESDAY",
+  "THURSDAY",
+  "FRIDAY",
+  "SATURDAY",
+];
 
 export interface RegisterEmployeePayload {
   employeeType: EmployeeType;

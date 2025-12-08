@@ -1,0 +1,9 @@
+.time-sheet-card-message {
+  padding-bottom: 1rem;
+  color: var(--error-red);
+}
+
+.time-sheet-card-button-area {
+  margin-top: 2rem;
+  gap: 2rem;
+}

@@ -130,7 +130,7 @@ p {
 }
 
 .page-container {
-  width: 100%;
+  width: 80%;
   height: fit-content;
   min-height: 100vh;
   padding: 1rem;
@@ -140,7 +140,7 @@ p {
 }
 
 .page-container-center {
-  width: 100%;
+  width: 80%;
   height: 100%;
   display: flex;
   padding: 1rem;

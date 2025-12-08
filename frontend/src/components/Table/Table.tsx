@@ -5,5 +5,9 @@ interface TableProps {
 }
 
 export const Table: React.FC<TableProps> = ({ children }) => {
-  return <table className="employee-management-table">{children}</table>;
+  return (
+    <div className="width-full flex">
+      <table className="employee-management-table">{children}</table>
+    </div>
+  );
 };

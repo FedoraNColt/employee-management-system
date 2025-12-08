@@ -1,11 +1,17 @@
 import type { Axios } from "axios";
-import type { EditEmployeePayload, Employee, PayInformation } from "../types";
+import type {
+  ContactInformation,
+  EditEmployeePayload,
+  Employee,
+  PayInformation,
+} from "../types";
 import type { GlobalContextReducers } from "./GlobalContext";
 import { useCallback, useState } from "react";
 
 export type EmployeeServiceType = {
   employeeUpdating: boolean;
   employeeUpdateError: boolean;
+  employeeUpdateCompleted: boolean;
   fetchAllEmployees: () => void;
   submitUpdateInformation: (
     payload: EditEmployeePayload,
@@ -16,6 +22,10 @@ export type EmployeeServiceType = {
     email: string,
     employees: Employee[]
   ) => void;
+  submitUpdateContactInformation: (
+    paload: ContactInformation,
+    email: string
+  ) => void;
 };
 
 export default function useEmployeeService(
@@ -23,10 +33,12 @@ export default function useEmployeeService(
   request: Axios,
   reducers: GlobalContextReducers
 ): EmployeeServiceType {
-  const { updateEmployees } = reducers;
+  const { updateEmployees, updateEmployee } = reducers;
 
   const [employeeUpdating, setEmployeeUpdating] = useState<boolean>(false);
   const [employeeUpdateError, setEmployeeUpdateError] =
+    useState<boolean>(false);
+  const [employeeUpdateCompleted, setEmployeeUpdateCompleted] =
     useState<boolean>(false);
 
   const loggedInEmployeeId = loggedInEmployee?.id ?? "";
@@ -56,6 +68,7 @@ export default function useEmployeeService(
       updateEmployees(insertUpdatedEmployee(employees, res.data));
     } catch (e) {
       console.log(e);
+      setEmployeeUpdateError(true);
     } finally {
       setEmployeeUpdating(false);
     }
@@ -82,17 +95,39 @@ export default function useEmployeeService(
       updateEmployees(insertUpdatedEmployee(employees, res.data));
     } catch (e) {
       console.log(e);
-      setEmployeeUpdateError(false);
+      setEmployeeUpdateError(true);
     } finally {
       setEmployeeUpdating(false);
+    }
+  };
+
+  const submitUpdateContactInformation = async (
+    payload: ContactInformation,
+    email: string
+  ) => {
+    try {
+      setEmployeeUpdating(true);
+      setEmployeeUpdateCompleted(false);
+      setEmployeeUpdateError(false);
+
+      const res = await request.put(`/employee/contact/${email}`, payload);
+      updateEmployee(res.data);
+    } catch (e) {
+      console.log(e);
+      setEmployeeUpdateError(true);
+    } finally {
+      setEmployeeUpdating(false);
+      setEmployeeUpdateCompleted(true);
     }
   };
 
   return {
     employeeUpdating,
     employeeUpdateError,
+    employeeUpdateCompleted,
     fetchAllEmployees,
     submitUpdateInformation,
     submitUpdatePayInformation,
+    submitUpdateContactInformation,
   };
 }
