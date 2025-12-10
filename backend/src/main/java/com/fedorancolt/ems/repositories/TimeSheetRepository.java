@@ -2,10 +2,12 @@ package com.fedorancolt.ems.repositories;
 
 import com.fedorancolt.ems.entities.Employee;
 import com.fedorancolt.ems.entities.TimeSheet;
+import com.fedorancolt.ems.entities.TimeSheetStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,5 +15,9 @@ import java.util.UUID;
 public interface TimeSheetRepository extends JpaRepository<TimeSheet, UUID> {
 
     Optional<TimeSheet> findByStartDateAndEmployee(LocalDate startDate, Employee employee);
+
+    List<TimeSheet> findAllByStatus(TimeSheetStatus status);
+
+    List<TimeSheet> findAllByEmployeeInAndStatus(List<Employee> employees, TimeSheetStatus status);
 
 }

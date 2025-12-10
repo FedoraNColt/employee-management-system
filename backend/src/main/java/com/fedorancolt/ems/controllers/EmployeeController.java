@@ -37,6 +37,11 @@ public class EmployeeController {
         return employeeService.readEmployeeByEmail(email);
     }
 
+    @GetMapping("/reportsTo/{email}")
+    public List<Employee> getManagersReports(@PathVariable("email") String email) {
+        return employeeService.readAllReportsByEmail(email);
+    }
+
     @PutMapping("/")
     public Employee putUpdatedEmployee(@RequestBody UpdateEmployeeRequest request) {
         return employeeService.updateEmployee(request);

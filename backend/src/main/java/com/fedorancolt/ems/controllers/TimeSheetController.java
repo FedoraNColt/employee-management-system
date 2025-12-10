@@ -1,6 +1,8 @@
 package com.fedorancolt.ems.controllers;
 
 import com.fedorancolt.ems.dtos.GenerateDatedTimeSheetRequest;
+import com.fedorancolt.ems.dtos.GenerateTimeSheetDataRequest;
+import com.fedorancolt.ems.dtos.ReviewTimeSheetRequest;
 import com.fedorancolt.ems.entities.Employee;
 import com.fedorancolt.ems.entities.TimeSheet;
 import com.fedorancolt.ems.entities.TimeSheetStatus;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -23,6 +26,11 @@ public class TimeSheetController {
     @PostMapping("/")
     public TimeSheet generateOrFetchTimeSheetForEmployee(@RequestBody Employee employee) {
         return timeSheetService.createOrReadTimeSheetForEmployee(employee);
+    }
+
+    @PostMapping("/manager")
+    public List<TimeSheet> getTimeSheetsToReviewForManager(@RequestBody List<Employee> employees) {
+        return timeSheetService.readManagersTimeSheetsForApproval(employees);
     }
 
     @PostMapping("/dates")
@@ -38,6 +46,16 @@ public class TimeSheetController {
     @PutMapping("/submit/{timeSheetId}")
     public TimeSheet submitTimeSheet(@PathVariable("timeSheetId") UUID timeSheetId) {
         return timeSheetService.updateTimeSheetStatus(timeSheetId, TimeSheetStatus.SUBMITTED);
+    }
+
+    @PutMapping("/review")
+    public TimeSheet reviewTimeSheet(@RequestBody ReviewTimeSheetRequest request) {
+        return timeSheetService.approveOrDenyTimeSheet(request.timeSheetId(), request.status(), request.approver(), request.message());
+    }
+
+    @PostMapping("/data")
+    public List<TimeSheet> generateTimeSheetData(@RequestBody GenerateTimeSheetDataRequest request) {
+        return timeSheetService.generateTimeSheetsForPayRollTests(request.employee(), request.manager());
     }
 
     @ExceptionHandler({TimeSheetDoesNotExistException.class})

@@ -42,6 +42,11 @@ public class EmployeeService implements UserDetailsService {
        return getEmployeeByEmailOrThrowException(email);
     }
 
+    public List<Employee> readAllReportsByEmail(String managerEmail) {
+        Employee manager = getEmployeeByEmailOrThrowException(managerEmail);
+        return employeeRepository.findByReportsTo(manager);
+    }
+
     public Employee updateEmployee(UpdateEmployeeRequest request) {
         Employee employee = getEmployeeByEmailOrThrowException(request.email());
 

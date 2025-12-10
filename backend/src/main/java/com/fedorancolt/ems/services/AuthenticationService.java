@@ -135,14 +135,14 @@ public class AuthenticationService {
         PayInformation payInfo1 = payInformationService.createPayInformation(
                 PayInformation.builder()
                         .payType(PayType.SALARY)
-                        .payAmount(new BigDecimal("80000.00"))
+                        .payAmount(new BigDecimal("800000.00"))
                         .build()
         );
 
         PayInformation payInfo2 = payInformationService.createPayInformation(
                 PayInformation.builder()
                         .payType(PayType.SALARY)
-                        .payAmount(new BigDecimal("10000.00"))
+                        .payAmount(new BigDecimal("100000.00"))
                         .build()
         );
 

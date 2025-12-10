@@ -80,6 +80,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(unprotectedRoutes()).permitAll()
                         .requestMatchers(adminRoutes()).hasRole("ADMIN")
+                        .requestMatchers(managerRoutes()).hasRole("MANAGER")
                         .requestMatchers(employeeRoutes()).hasRole("EMPLOYEE")
                         .anyRequest().authenticated())
                 .build();
@@ -99,6 +100,18 @@ public class SecurityConfiguration {
                 new AntPathRequestMatcher("/employee/{email}", "DELETE"),
                 new AntPathRequestMatcher("/employee/pay/{email}", "PUT"),
                 new AntPathRequestMatcher("/employee/", "PUT"),
+                new AntPathRequestMatcher("/payroll/preview", "GET"),
+                new AntPathRequestMatcher("/payroll/run", "GET"),
+                new AntPathRequestMatcher("/timesheet/data", "POST"),
+                new AntPathRequestMatcher("/payroll/data", "POST"),
+        };
+    }
+
+    private static AntPathRequestMatcher[] managerRoutes() {
+        return new AntPathRequestMatcher[]{
+                new AntPathRequestMatcher("/employee/reportsTo/{email}", "GET"),
+                new AntPathRequestMatcher("/timesheet/manager", "POST"),
+                new AntPathRequestMatcher("/timesheet/review", "PUT")
         };
     }
 

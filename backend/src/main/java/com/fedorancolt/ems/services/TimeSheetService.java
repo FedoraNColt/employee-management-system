@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static com.fedorancolt.ems.utils.TimeSheetUtils.MAX_REGULAR_HOURS;
 
@@ -65,6 +62,14 @@ public class TimeSheetService {
         return createTimeSheetWithDatesForEmployee(employee, startDate, endDate);
     }
 
+    public List<TimeSheet> readManagersTimeSheetsForApproval(List<Employee> employees) {
+        return timeSheetRepository.findAllByEmployeeInAndStatus(employees, TimeSheetStatus.SUBMITTED);
+    }
+
+    public List<TimeSheet> readTimeSheetsForPayRoll() {
+        return timeSheetRepository.findAllByStatus(TimeSheetStatus.APPROVED);
+    }
+
     public TimeSheet updateTimeSheetHours(TimeSheet timeSheet) {
         List<TimeSheetHours> hours = timeSheet.getHours();
 
@@ -88,11 +93,27 @@ public class TimeSheetService {
         return timeSheetRepository.save(timeSheet);
     }
 
+    public TimeSheet approveOrDenyTimeSheet(
+            UUID timeSheetId,
+            TimeSheetStatus status,
+            Employee approver,
+            String message) {
+        TimeSheet timeSheet = retrieveTimeSheetByIdOrThrowTimeSheetDoesNotException(timeSheetId);
+
+        timeSheet.setStatus(status);
+        timeSheet.setApprover(approver);
+        timeSheet.setMessage(message);
+
+        return timeSheetRepository.save(timeSheet);
+    }
+
     private TimeSheet retrieveTimeSheetByIdOrThrowTimeSheetDoesNotException(UUID timeSheetId) {
         return timeSheetRepository.findById(timeSheetId).orElseThrow(TimeSheetDoesNotExistException::new);
     }
 
-    private List<TimeSheetHours> generateHoursForTimeSheet(TimeSheet timeSheet, LocalDate startDate, LocalDate endDate) {
+    private List<TimeSheetHours> generateHoursForTimeSheet(TimeSheet timeSheet,
+                                                           LocalDate startDate,
+                                                           LocalDate endDate) {
         List<TimeSheetHours> hours = new ArrayList<>();
 
         for (int i = 0; i < 7; ++i) {
@@ -106,6 +127,34 @@ public class TimeSheetService {
         }
         timeSheetHoursRepository.saveAll(hours);
         return hours;
+    }
+
+    public List<TimeSheet> generateTimeSheetsForPayRollTests(Employee employee, Employee manager) {
+
+        List<TimeSheet> timeSheets = new ArrayList<>();
+
+        Random rand = new Random();
+        LocalDate workingDate = LocalDate.of(2024, 12, 29);
+        LocalDate today = LocalDate.now().minusDays(7);
+
+        while (workingDate.isBefore(today)) {
+            TimeSheet timeSheet = TimeSheet.builder()
+                    .employee(employee)
+                    .startDate(workingDate)
+                    .endDate(workingDate.plusDays(6))
+                    .regularHours(40.0)
+                    .overtimeHours(Math.ceil(rand.nextDouble(21.0)))
+                    .approver(manager)
+                    .status(TimeSheetStatus.APPROVED)
+                    .hours(new ArrayList<>())
+                    .build();
+
+            timeSheetRepository.save(timeSheet);
+            timeSheets.add(timeSheet);
+            workingDate = workingDate.plusDays(7);
+        }
+
+        return timeSheets;
     }
 
 }
