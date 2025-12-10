@@ -31,7 +31,6 @@ export default function usePayService(
       setLoadingTimeSheetData(true);
       setTimeSheetError(false);
       const res = await request.post("/timesheet/", employee);
-      console.log(res.data);
       updateTimeSheet(res.data);
     } catch (e) {
       console.log(e);

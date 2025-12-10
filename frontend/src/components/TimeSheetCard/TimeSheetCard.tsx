@@ -16,7 +16,6 @@ interface TimeSheetCardProps {
 }
 
 export const TimeSheetCard: React.FC<TimeSheetCardProps> = ({ timeSheet }) => {
-  console.log(timeSheet);
   const { payService } = useGlobalContext() as GlobalContextType;
   const [timeSheetHours, setTimeSheetHours] = useState<number[]>(() =>
     timeSheet.hours.map((hour) => hour.hours)
@@ -77,9 +76,9 @@ export const TimeSheetCard: React.FC<TimeSheetCardProps> = ({ timeSheet }) => {
 
   return (
     <InformationCard>
-      <h3>Update Your Timesheey</h3>
+      <h3>Update Your Timesheet</h3>
       <h4>
-        Current Timesheet Status{" "}
+        Current Timesheet Status{" - "}
         <span style={{ color: statusClass() }}>{timeSheet.status}</span>
       </h4>
       {timeSheet.message && (
