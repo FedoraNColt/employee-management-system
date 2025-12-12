@@ -67,9 +67,9 @@ export const TimeSheetCard: React.FC<TimeSheetCardProps> = ({ timeSheet }) => {
       case "SUBMITTED":
         return "var(--text-primary)";
       case "APPROVED":
-      case "DENIED":
-        return "var(--secondary)";
       case "PAID":
+        return "var(--secondary)";
+      case "DENIED":
         return "var(--error-red)";
     }
   };
@@ -118,7 +118,7 @@ export const TimeSheetCard: React.FC<TimeSheetCardProps> = ({ timeSheet }) => {
       </Table>
       <div className="column time-sheet-card-button-area">
         <p>
-          Bu submitting your timesheet for approval, you verify that you have
+          By submitting your timesheet for approval, you verify that you have
           reviewed your timesheet for accuracy and completness.
         </p>
         <div className="space-between">
