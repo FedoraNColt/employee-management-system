@@ -31,6 +31,24 @@ export type EmployeeType = "ADMIN" | "MANAGER" | "EMPLOYEE";
 
 export type PayType = "SALARY" | "HOURLY";
 
+export interface PayRollPreview {
+  employee: string;
+  paymentDate: Date;
+  grossPay: number;
+}
+
+export interface PayStub {
+  id: number;
+  payDate: Date;
+  employee: Employee;
+  grossHours: number;
+  grossPay: number;
+  regularHours: number;
+  regularPay: number;
+  overtimeHours: number;
+  overtimePay: number;
+}
+
 export type DayOfWeek =
   | "SUNDAY"
   | "MONDAY"
@@ -152,4 +170,11 @@ export interface EditEmployeePayload {
   lastName: string | null;
   employeeType: EmployeeType;
   reportsTo: string | null;
+}
+
+export interface ReviewTimeSheetPayload {
+  approver: Employee;
+  timeSheetId: string;
+  status: TimeSheetStatus;
+  message: string | null;
 }

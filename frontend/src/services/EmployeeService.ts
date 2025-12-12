@@ -26,6 +26,7 @@ export type EmployeeServiceType = {
     paload: ContactInformation,
     email: string
   ) => void;
+  fetchManagersReports: (email: string) => void;
 };
 
 export default function useEmployeeService(
@@ -121,6 +122,15 @@ export default function useEmployeeService(
     }
   };
 
+  const fetchManagersReports = async (email: string) => {
+    try {
+      const res = await request.get(`/employee/reportsTo/${email}`);
+      updateEmployees(res.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return {
     employeeUpdating,
     employeeUpdateError,
@@ -129,5 +139,6 @@ export default function useEmployeeService(
     submitUpdateInformation,
     submitUpdatePayInformation,
     submitUpdateContactInformation,
+    fetchManagersReports,
   };
 }

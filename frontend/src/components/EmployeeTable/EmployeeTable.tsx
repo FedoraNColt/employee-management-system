@@ -132,6 +132,8 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
                       <PayInformationCard
                         payInfo={employee.payInformation}
                         location="employees"
+                        payStubs={[]}
+                        displayPayStubs={false}
                       />
                     )}
                   </div>

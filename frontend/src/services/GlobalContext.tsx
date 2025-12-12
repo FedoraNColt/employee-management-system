@@ -5,7 +5,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import type { Employee, TimeSheet } from "../types";
+import type { Employee, PayRollPreview, PayStub, TimeSheet } from "../types";
 import { apiClient } from "./apiClient";
 import useAuthenticationService, {
   type AuthenticationServiceType,
@@ -19,6 +19,10 @@ export type GlobalContextType = {
   employee: Employee | undefined;
   employees: Employee[];
   timeSheet: TimeSheet | undefined;
+  timeSheets: TimeSheet[];
+  payRollPreview: PayRollPreview[];
+  payRoll: PayStub[];
+  payStubs: PayStub[];
   authenticationService: AuthenticationServiceType;
   employeeService: EmployeeServiceType;
   payService: PayServiceType;
@@ -28,6 +32,10 @@ export type GlobalContextReducers = {
   updateEmployee: (employee: Employee) => void;
   updateEmployees: (employees: Employee[]) => void;
   updateTimeSheet: (timeSheet: TimeSheet | undefined) => void;
+  updateTimeSheets: (timeSheets: TimeSheet[]) => void;
+  updatePayRollPreview: (payRollPreview: PayRollPreview[]) => void;
+  updatePayRoll: (payRoll: PayStub[]) => void;
+  updatePayStubs: (payStubs: PayStub[]) => void;
 };
 
 const GlobalContext = createContext<GlobalContextType | null>(null);
@@ -40,6 +48,10 @@ function GlobalContextProvider(props: { children: React.ReactNode }) {
   const [employee, setEmployee] = useState<Employee | undefined>();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [timeSheet, setTimeSheet] = useState<TimeSheet | undefined>();
+  const [timeSheets, setTimeSheets] = useState<TimeSheet[]>([]);
+  const [payRollPreview, setPayRollPreview] = useState<PayRollPreview[]>([]);
+  const [payRoll, setPayRoll] = useState<PayStub[]>([]);
+  const [payStubs, setPayStubs] = useState<PayStub[]>([]);
 
   const updateEmployee = useCallback((employee: Employee | undefined) => {
     setEmployee(employee);
@@ -53,9 +65,44 @@ function GlobalContextProvider(props: { children: React.ReactNode }) {
     setTimeSheet(timeSheet);
   }, []);
 
+  const updateTimeSheets = useCallback((timeSheets: TimeSheet[]) => {
+    setTimeSheets(timeSheets);
+  }, []);
+
+  const updatePayRollPreview = useCallback(
+    (payRollPreview: PayRollPreview[]) => {
+      setPayRollPreview(payRollPreview);
+    },
+    []
+  );
+
+  const updatePayRoll = useCallback((payRoll: PayStub[]) => {
+    setPayRoll(payRoll);
+  }, []);
+
+  const updatePayStubs = useCallback((payStubs: PayStub[]) => {
+    setPayStubs(payStubs);
+  }, []);
+
   const reducers: GlobalContextReducers = useMemo(
-    () => ({ updateEmployee, updateEmployees, updateTimeSheet }),
-    [updateEmployee, updateEmployees, updateTimeSheet]
+    () => ({
+      updateEmployee,
+      updateEmployees,
+      updateTimeSheet,
+      updateTimeSheets,
+      updatePayRollPreview,
+      updatePayRoll,
+      updatePayStubs,
+    }),
+    [
+      updateEmployee,
+      updateEmployees,
+      updateTimeSheet,
+      updateTimeSheets,
+      updatePayRollPreview,
+      updatePayRoll,
+      updatePayStubs,
+    ]
   );
 
   const authenticationService = useAuthenticationService(apiClient, reducers);
@@ -68,6 +115,10 @@ function GlobalContextProvider(props: { children: React.ReactNode }) {
         employee,
         employees,
         timeSheet,
+        timeSheets,
+        payRollPreview,
+        payRoll,
+        payStubs,
         authenticationService,
         employeeService,
         payService,

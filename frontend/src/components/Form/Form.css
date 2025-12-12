@@ -41,3 +41,21 @@
   color: var(--border-color);
   font-weight: 400;
 }
+
+.employee-management-form-textarea {
+  padding: 0.5rem 0.5rem;
+  background-color: var(--background);
+  border-radius: var(--border-large);
+  resize: none;
+  word-wrap: break-word;
+  overflow-y: auto;
+}
+
+.employee-management-form-textarea:focus {
+  outline: none;
+}
+
+.employee-management-form-textarea::placeholder {
+  color: var(--border-color);
+  font-weight: 400;
+}

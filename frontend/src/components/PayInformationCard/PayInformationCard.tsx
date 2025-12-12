@@ -1,17 +1,27 @@
+import { useEffect, useState } from "react";
 import useFormatDollars from "../../services/useFormatDollars";
-import type { PayInformation } from "../../types";
+import type { PayInformation, PayStub } from "../../types";
 import { InformationCard } from "../InformationCard/InformationCard";
+import { PayRollTable } from "../PayRollTable/PayRollTable";
+
+import "./PayInformationCard.css";
 
 interface PayInformationCardProps {
   payInfo: PayInformation;
   location: string;
+  displayPayStubs: boolean;
+  payStubs: PayStub[];
 }
 
 export const PayInformationCard: React.FC<PayInformationCardProps> = ({
   payInfo,
   location,
+  displayPayStubs,
+  payStubs,
 }) => {
   const { format } = useFormatDollars("en-US", "currency", "USD");
+  const [totalEarnings, setTotalEarnings] = useState<number>(0);
+
   const estimatedYearlyPay = (payInfo: PayInformation): string => {
     if (payInfo.payType === "SALARY") {
       return `${format(payInfo.payAmount)}`;
@@ -19,6 +29,16 @@ export const PayInformationCard: React.FC<PayInformationCardProps> = ({
       return `${format(payInfo.payAmount * 40 * 52)}`;
     }
   };
+
+  useEffect(() => {
+    setTotalEarnings(() => {
+      let total = 0;
+      payStubs.forEach((ps: PayStub) => {
+        total += ps.grossPay;
+      });
+      return total;
+    });
+  }, [payStubs, payStubs.length]);
 
   return (
     <InformationCard>
@@ -41,6 +61,23 @@ export const PayInformationCard: React.FC<PayInformationCardProps> = ({
             <p>{estimatedYearlyPay(payInfo)}</p>
           </div>
         </div>
+
+        {displayPayStubs && (
+          <div>
+            <div className="row pay-information-earnings">
+              <h4>Year to Date Earning</h4>
+              <h6>{format(totalEarnings)}</h6>
+            </div>
+            <div className="pay-information-scroll-container">
+              <PayRollTable
+                preview={false}
+                displayEmployee={false}
+                payStubs={payStubs}
+                previewStubs={[]}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </InformationCard>
   );

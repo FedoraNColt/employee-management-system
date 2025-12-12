@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ContactInformationCard } from "../components/ContactInformationCard/ContactInformationCard";
 import { Loading } from "../components/Loading/Loading";
 import { PayInformationCard } from "../components/PayInformationCard/PayInformationCard";
@@ -8,7 +9,12 @@ import useGlobalContext, {
 import "./ManageSelfPage.css";
 
 export default function ManageSelfPage() {
-  const { employee } = useGlobalContext() as GlobalContextType;
+  const { employee, payStubs, payService } =
+    useGlobalContext() as GlobalContextType;
+
+  useEffect(() => {
+    if (employee) payService.fetchPayStubsByEmail(employee.email);
+  }, [employee]);
   return (
     <div className="page-container-center">
       {employee ? (
@@ -21,6 +27,8 @@ export default function ManageSelfPage() {
           <PayInformationCard
             payInfo={employee.payInformation}
             location="manage"
+            payStubs={payStubs}
+            displayPayStubs={true}
           />
         </div>
       ) : (

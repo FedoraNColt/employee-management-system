@@ -1,5 +1,6 @@
 import { CreateEmployeeForm } from "../components/CreateEmployeeForm/CreateEmployeeForm";
 import { EmployeesCard } from "../components/EmployeesCard/EmployeesCard";
+import { PayRollCard } from "../components/PayRollCard/PayRollCard";
 import useGlobalContext, {
   type GlobalContextType,
 } from "../services/GlobalContext";
@@ -25,6 +26,7 @@ export default function ManageEmployeesPage() {
         employees={employees}
         displayEditEmployee={true}
       />
+      <PayRollCard />
     </div>
   );
 }

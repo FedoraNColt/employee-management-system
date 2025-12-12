@@ -1,0 +1,11 @@
+.pay-information-earnings {
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pay-information-scroll-container {
+  width: 100%;
+  height: fit-content;
+  max-height: 18.75rem;
+  overflow-y: auto;
+}

@@ -1,0 +1,6 @@
+.pay-roll-card-scroll-container {
+  width: 100%;
+  height: fit-content;
+  max-height: 37.5rem;
+  overflow-y: auto;
+}
