@@ -1,7 +1,6 @@
 package com.fedorancolt.ems.services;
 
-import com.fedorancolt.ems.dtos.RegisterRequest;
-import com.fedorancolt.ems.dtos.RegisterResponse;
+import com.fedorancolt.ems.dtos.*;
 import com.fedorancolt.ems.entities.*;
 import com.fedorancolt.ems.exceptions.InvalidCredentialsException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,11 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,22 +30,23 @@ public class AuthenticationService {
     private final ContactInformationService contactInformationService;
     private final PayInformationService payInformationService;
     private final PasswordEncoder passwordEncoder;
-    private final SecurityContextRepository securityContextRepository;
-    private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+    private final TokenService tokenService;
 
-
-    public Employee loginEmployee(String email, String password, HttpServletRequest request, HttpServletResponse response) {
+    public LoginResponse loginEmployee(String email, String password, HttpServletRequest request, HttpServletResponse response) {
         try {
             UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken.unauthenticated(email, password);
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-            if (authentication.isAuthenticated()) {
-                SecurityContext context = SecurityContextHolder.createEmptyContext();
-                context.setAuthentication(authentication);
-                securityContextHolderStrategy.setContext(context);
-                securityContextRepository.saveContext(context, request, response);
-            }
-            return employeeService.readEmployeeByEmail(email);
+            Employee employee = employeeService.readEmployeeByEmail(email);
+            String jwtToken = tokenService.generateToken(employee);
+            String refreshToken = tokenService.generateRefreshToken(employee).getToken();
+
+           return LoginResponse
+                   .builder()
+                   .employee(employee)
+                   .token(jwtToken)
+                   .refresh(refreshToken)
+                   .build();
         }
         catch (AuthenticationException e) {
             throw new InvalidCredentialsException("Incorrect email or password");
@@ -96,6 +92,27 @@ public class AuthenticationService {
                 .employee(employee)
                 .temporaryPassword(temporaryPassword)
                 .build();
+    }
+
+    public LoginResponse updateEmployeePassword(String jwt, UpdatePasswordRequest payload) {
+        Employee employee = employeeService.readEmployeeByEmail(tokenService.extractEmployeeEmailFromToken(jwt));
+        String encodedPassword = passwordEncoder.encode(payload.password());
+        employee.setPassword(encodedPassword);
+        employee.setFirstTimeLogin(false);
+        employee = employeeService.createOrUpdateEmployee(employee);
+        LoginResponse refreshObject = tokenService.refreshJwt(payload.refreshToken());
+        refreshObject.setEmployee(employee);
+        return  refreshObject;
+    }
+
+    public void logout(String jwt) {
+        Employee employee = employeeService.readEmployeeByEmail(tokenService.extractEmployeeEmailFromToken(jwt));
+        tokenService.deleteEmployeeRefreshToken(employee);
+    }
+
+    public Employee readEmployeeFromToken(String token) {
+        String email = tokenService.extractEmployeeEmailFromToken(token);
+        return employeeService.readEmployeeByEmail(email);
     }
 
     public void loadUserInfo() {

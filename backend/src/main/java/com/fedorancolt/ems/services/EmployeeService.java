@@ -95,7 +95,7 @@ public class EmployeeService implements UserDetailsService {
             return User.builder()
                     .username(employee.getEmail())
                     .password(employee.getPassword())
-                    .roles(employee.getEmployeeType().toString())
+                    .authorities(employee.getEmployeeType().toString())
                     .build();
         } catch (EmployeeDoesNotExist e) {
             throw new UsernameNotFoundException("Employee does not exist");
