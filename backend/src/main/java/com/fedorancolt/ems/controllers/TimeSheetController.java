@@ -36,12 +36,17 @@ public class TimeSheetController {
 
     @PostMapping("/manager")
     public List<TimeSheet> getTimeSheetsToReviewForManager(@RequestBody List<Employee> employees) {
-        return timeSheetService.readManagersTimeSheetsForApproval(employees);
+        // Resolve each employee from the DB to ensure valid IDs for FK relations.
+        List<Employee> managedEmployees = employees.stream()
+                .map(emp -> employeeService.readEmployeeByEmail(emp.getEmail()))
+                .toList();
+        return timeSheetService.readManagersTimeSheetsForApproval(managedEmployees);
     }
 
     @PostMapping("/dates")
     public TimeSheet generateTimeSheetWithDates(@RequestBody GenerateDatedTimeSheetRequest request) {
-        return timeSheetService.createTimeSheetWithDatesForEmployee(request.employee(), request.startDate(), request.endDate());
+        Employee employee = employeeService.readEmployeeByEmail(request.employee().getEmail());
+        return timeSheetService.createTimeSheetWithDatesForEmployee(employee, request.startDate(), request.endDate());
     }
 
     @PutMapping("/hours")
