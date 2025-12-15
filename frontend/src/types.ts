@@ -178,3 +178,9 @@ export interface ReviewTimeSheetPayload {
   status: TimeSheetStatus;
   message: string | null;
 }
+
+export interface LoginEmployeeResponse {
+  employee: Employee;
+  token: string;
+  refresh: string;
+}

@@ -14,19 +14,27 @@ export type AuthenticationServiceType = {
   newEmployeeCredentials: NewEmployeeLogin | undefined;
   employeeCreationError: boolean;
   savingNewEmployee: boolean;
+  loggingOut: boolean;
   submitLogin: (email: string, password: string) => void;
   updateCreatingEmployee: (payload: boolean) => void;
   submitRegister: (
     payload: RegisterEmployeePayload,
     employees: Employee[]
   ) => void;
+  submitLogout: (employee: Employee | undefined) => void;
+  submitUpdateEmployeePassword: (
+    password: string,
+    refreshToken: string
+  ) => void;
+  refreshEmployee: (refreshToken: string) => void;
 };
 
 export default function useAuthenticationService(
-  request: Axios,
+  authenticatedRequest: Axios,
+  unAuthenticatedRequest: Axios,
   reducers: GlobalContextReducers
 ): AuthenticationServiceType {
-  const { updateEmployee, updateEmployees } = reducers;
+  const { updateAuth, updateEmployees, clearState } = reducers;
 
   const [loadingEmployeeInformation, setLoadingEmployeeInformation] =
     useState<boolean>(false);
@@ -39,18 +47,20 @@ export default function useAuthenticationService(
   const [employeeCreationError, setEmployeeCreationError] =
     useState<boolean>(false);
   const [savingNewEmployee, setSavingNewEmployee] = useState<boolean>(false);
+  const [loggingOut, setLoggingOut] = useState<boolean>(false);
 
   const submitLogin = async (email: string, password: string) => {
     try {
       setEmployeeAuthenticationError(false);
       setLoadingEmployeeInformation(true);
+      setLoggingOut(false);
 
-      const res = await request.post("/auth/login", {
+      const res = await unAuthenticatedRequest.post("/auth/login", {
         email,
         password,
       });
 
-      updateEmployee(res.data);
+      updateAuth(res.data);
     } catch (e) {
       console.log(e);
       setEmployeeAuthenticationError(true);
@@ -75,7 +85,7 @@ export default function useAuthenticationService(
       setEmployeeCreationError(false);
       setSavingNewEmployee(true);
 
-      const res = await request.post("/auth/register", payload);
+      const res = await authenticatedRequest.post("/auth/register", payload);
       const newEmployee = res.data?.employee;
       console.log(newEmployee);
 
@@ -93,6 +103,61 @@ export default function useAuthenticationService(
     }
   };
 
+  const submitLogout = async (employee: Employee | undefined) => {
+    try {
+      if (employee) {
+        await authenticatedRequest.delete("/auth/logout");
+        setLoggingOut(true);
+        setLoadingEmployeeInformation(false);
+        clearState();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const submitUpdateEmployeePassword = async (
+    password: string,
+    refreshToken: string
+  ) => {
+    try {
+      setLoadingEmployeeInformation(true);
+      setEmployeeAuthenticationError(false);
+
+      const res = await authenticatedRequest.put("/auth/password/update", {
+        password,
+        refreshToken,
+      });
+      updateAuth(res.data);
+    } catch (e) {
+      console.log(e);
+      setEmployeeAuthenticationError(true);
+    } finally {
+      setLoadingEmployeeInformation(false);
+    }
+  };
+
+  const refreshEmployee = async (refresh: string | null) => {
+    if (refresh) {
+      try {
+        setLoadingEmployeeInformation(true);
+        setEmployeeAuthenticationError(false);
+
+        const res = await unAuthenticatedRequest.get(
+          `/auth/refresh/${refresh}`
+        );
+        updateAuth(res.data);
+      } catch (e) {
+        console.log(e);
+        setEmployeeAuthenticationError(true);
+      } finally {
+        setLoadingEmployeeInformation(false);
+      }
+    } else {
+      setEmployeeAuthenticationError(true);
+    }
+  };
+
   return {
     loadingEmployeeInformation,
     employeeAuthenticationError,
@@ -100,8 +165,12 @@ export default function useAuthenticationService(
     newEmployeeCredentials,
     employeeCreationError,
     savingNewEmployee,
+    loggingOut,
     submitLogin,
     updateCreatingEmployee,
     submitRegister,
+    submitLogout,
+    submitUpdateEmployeePassword,
+    refreshEmployee,
   };
 }

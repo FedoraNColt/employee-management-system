@@ -2,11 +2,17 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
-import type { Employee, PayRollPreview, PayStub, TimeSheet } from "../types";
-import { apiClient } from "./apiClient";
+import type {
+  Employee,
+  LoginEmployeeResponse,
+  PayRollPreview,
+  PayStub,
+  TimeSheet,
+} from "../types";
 import useAuthenticationService, {
   type AuthenticationServiceType,
 } from "./AuthenticationService";
@@ -14,8 +20,12 @@ import useEmployeeService, {
   type EmployeeServiceType,
 } from "./EmployeeService";
 import usePayService, { type PayServiceType } from "./PayService";
+import useAxios from "./useAxios";
+import useLocalStorage from "./useLocalStorage";
 
 export type GlobalContextType = {
+  token: string | null;
+  refresh: string | null;
   employee: Employee | undefined;
   employees: Employee[];
   timeSheet: TimeSheet | undefined;
@@ -23,12 +33,15 @@ export type GlobalContextType = {
   payRollPreview: PayRollPreview[];
   payRoll: PayStub[];
   payStubs: PayStub[];
+  clearState: () => void;
   authenticationService: AuthenticationServiceType;
   employeeService: EmployeeServiceType;
   payService: PayServiceType;
 };
 
 export type GlobalContextReducers = {
+  clearState: () => void;
+  updateAuth: (loginResponse: LoginEmployeeResponse) => void;
   updateEmployee: (employee: Employee) => void;
   updateEmployees: (employees: Employee[]) => void;
   updateTimeSheet: (timeSheet: TimeSheet | undefined) => void;
@@ -45,6 +58,20 @@ const useGlobalContext = () => {
 };
 
 function GlobalContextProvider(props: { children: React.ReactNode }) {
+  const {
+    value: storedAuthToken,
+    setLocalStorageItem: setStoredAuthToken,
+    removeLocalStorageItem: removeStoredAuthToken,
+  } = useLocalStorage("token");
+
+  const {
+    value: storedRefreshToken,
+    setLocalStorageItem: setStoredRefreshToken,
+    removeLocalStorageItem: removeStoredRefreshToken,
+  } = useLocalStorage("refresh");
+
+  const [token, setToken] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState<string | null>(null);
   const [employee, setEmployee] = useState<Employee | undefined>();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [timeSheet, setTimeSheet] = useState<TimeSheet | undefined>();
@@ -52,6 +79,46 @@ function GlobalContextProvider(props: { children: React.ReactNode }) {
   const [payRollPreview, setPayRollPreview] = useState<PayRollPreview[]>([]);
   const [payRoll, setPayRoll] = useState<PayStub[]>([]);
   const [payStubs, setPayStubs] = useState<PayStub[]>([]);
+
+  useEffect(() => {
+    if (!token && !refresh) {
+      setToken(storedAuthToken || "");
+      setRefresh(storedRefreshToken || "");
+    } else {
+      setStoredAuthToken(token || "");
+      setStoredRefreshToken(refresh || "");
+    }
+  }, [
+    token,
+    refresh,
+    storedAuthToken,
+    storedRefreshToken,
+    setStoredAuthToken,
+    setStoredRefreshToken,
+  ]);
+
+  const authenticatedAxios = useAxios(true, token || "");
+  const unAuthenticatedAxios = useAxios(false);
+
+  const clearState = useCallback(() => {
+    removeStoredAuthToken();
+    removeStoredRefreshToken();
+    setToken(null);
+    setRefresh(null);
+    setEmployee(undefined);
+    setEmployees([]);
+    setTimeSheet(undefined);
+    setTimeSheets([]);
+    setPayRollPreview([]);
+    setPayRoll([]);
+    setPayStubs([]);
+  }, [removeStoredAuthToken, removeStoredRefreshToken]);
+
+  const updateAuth = useCallback((loginResponse: LoginEmployeeResponse) => {
+    setEmployee(loginResponse.employee);
+    setToken(loginResponse.token);
+    setRefresh(loginResponse.refresh);
+  }, []);
 
   const updateEmployee = useCallback((employee: Employee | undefined) => {
     setEmployee(employee);
@@ -86,6 +153,8 @@ function GlobalContextProvider(props: { children: React.ReactNode }) {
 
   const reducers: GlobalContextReducers = useMemo(
     () => ({
+      clearState,
+      updateAuth,
       updateEmployee,
       updateEmployees,
       updateTimeSheet,
@@ -95,6 +164,8 @@ function GlobalContextProvider(props: { children: React.ReactNode }) {
       updatePayStubs,
     }),
     [
+      clearState,
+      updateAuth,
       updateEmployee,
       updateEmployees,
       updateTimeSheet,
@@ -105,13 +176,23 @@ function GlobalContextProvider(props: { children: React.ReactNode }) {
     ]
   );
 
-  const authenticationService = useAuthenticationService(apiClient, reducers);
-  const employeeService = useEmployeeService(employee, apiClient, reducers);
-  const payService = usePayService(apiClient, reducers);
+  const authenticationService = useAuthenticationService(
+    authenticatedAxios,
+    unAuthenticatedAxios,
+    reducers
+  );
+  const employeeService = useEmployeeService(
+    employee,
+    authenticatedAxios,
+    reducers
+  );
+  const payService = usePayService(unAuthenticatedAxios, reducers);
 
   return (
     <GlobalContext.Provider
       value={{
+        token,
+        refresh,
         employee,
         employees,
         timeSheet,
@@ -119,6 +200,7 @@ function GlobalContextProvider(props: { children: React.ReactNode }) {
         payRollPreview,
         payRoll,
         payStubs,
+        clearState,
         authenticationService,
         employeeService,
         payService,
