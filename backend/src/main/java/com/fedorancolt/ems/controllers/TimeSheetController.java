@@ -66,9 +66,9 @@ public class TimeSheetController {
 
     @PostMapping("/data")
     public List<TimeSheet> generateTimeSheetData(@RequestBody GenerateTimeSheetDataRequest request) {
-        // Resolve employees from the DB to avoid FK violations when client sends transient IDs.
-        Employee employee = employeeService.readEmployeeByEmail(request.employee().getEmail());
-        Employee manager = employeeService.readEmployeeByEmail(request.manager().getEmail());
+        // Resolve employees from the DB using emails to avoid FK violations and reduce payload size.
+        Employee employee = employeeService.readEmployeeByEmail(request.employeeEmail());
+        Employee manager = employeeService.readEmployeeByEmail(request.managerEmail());
         return timeSheetService.generateTimeSheetsForPayRollTests(employee, manager);
     }
 
