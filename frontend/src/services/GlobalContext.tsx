@@ -103,8 +103,8 @@ function GlobalContextProvider(props: { children: React.ReactNode }) {
   const clearState = useCallback(() => {
     removeStoredAuthToken();
     removeStoredRefreshToken();
-    setToken(null);
-    setRefresh(null);
+    setToken("");
+    setRefresh("");
     setEmployee(undefined);
     setEmployees([]);
     setTimeSheet(undefined);
@@ -186,7 +186,7 @@ function GlobalContextProvider(props: { children: React.ReactNode }) {
     authenticatedAxios,
     reducers
   );
-  const payService = usePayService(unAuthenticatedAxios, reducers);
+  const payService = usePayService(authenticatedAxios, reducers);
 
   return (
     <GlobalContext.Provider

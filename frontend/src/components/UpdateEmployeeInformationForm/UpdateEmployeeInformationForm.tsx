@@ -63,6 +63,7 @@ export const UpdateEmployeeInformationForm: React.FC<
         <Form
           buttonText="Update Employee Information"
           width="50%"
+          height=""
           error={employeeService.employeeUpdateError}
           errorMessage="Unable to update Employee"
           action={handleSubmitUpdate}

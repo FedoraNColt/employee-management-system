@@ -13,6 +13,10 @@
   border: 1px solid var(--error-red);
 }
 
+.employee-management-form-error-message {
+  color: var(--error-red);
+}
+
 .employee-management-form-label {
   padding-bottom: 0.5rem;
   display: block;

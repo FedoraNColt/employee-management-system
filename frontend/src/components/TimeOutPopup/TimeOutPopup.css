@@ -1,0 +1,24 @@
+.time-out-popup-container {
+  height: 100%;
+  padding-top: 2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.time-out-popup {
+  padding: 1.5rem;
+  background-color: var(--foreground);
+  box-shadow: var(--box-shadow);
+  border: none;
+  border-radius: var(--border-small);
+}
+
+.time-out-popup-button-group {
+  height: fit-content;
+  padding-top: 0.75em;
+}

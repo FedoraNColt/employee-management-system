@@ -2,6 +2,9 @@ import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
+import useGlobalContext, {
+  type GlobalContextType,
+} from "../../services/GlobalContext";
 
 interface NavbarProps {
   type: string;
@@ -42,7 +45,15 @@ function getNavbarItems(type: string): NavItem[] {
 export const Navbar: React.FC<NavbarProps> = ({ type }) => {
   const navigate = useNavigate();
 
+  const { employee, authenticationService } =
+    useGlobalContext() as GlobalContextType;
+
   const navbarItems = getNavbarItems(type);
+
+  const handleLogoutClicked = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    authenticationService.submitLogout(employee);
+  };
 
   return (
     <nav className="nav-bar space-between">
@@ -60,7 +71,7 @@ export const Navbar: React.FC<NavbarProps> = ({ type }) => {
             <h6>{item.text}</h6>
           </div>
         ))}
-        <div className="center nav-bar-item">
+        <div className="center nav-bar-item" onClick={handleLogoutClicked}>
           <h6>Logout</h6>
         </div>
       </div>

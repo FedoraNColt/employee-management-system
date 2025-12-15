@@ -4,9 +4,13 @@ import useGlobalContext, {
 } from "../services/GlobalContext";
 import { useCallback, useEffect } from "react";
 import { LoginForm } from "../components/LoginForm/LoginForm";
+import { ResetPasswordForm } from "../components/ResetPasswordForm/ResetPasswordForm";
 
 function LoginPage() {
-  const { employee } = useGlobalContext() as GlobalContextType;
+  const {
+    employee,
+    authenticationService: { loggingOut },
+  } = useGlobalContext() as GlobalContextType;
   const navigate = useNavigate();
 
   const navigateToEmployeePortal = useCallback(() => {
@@ -14,16 +18,21 @@ function LoginPage() {
   }, [navigate, employee]);
 
   useEffect(() => {
-    if (employee) {
+    if (employee && !employee.firstTimeLogin && !loggingOut) {
       navigateToEmployeePortal();
     }
-  }, [employee, navigateToEmployeePortal]);
+  }, [employee, navigateToEmployeePortal, loggingOut]);
 
   return (
     <div className="page">
       <div className="page-container-center">
-        <h1>Company Portal</h1>
-        <LoginForm />
+        {employee?.firstTimeLogin ? (
+          <h1>Reset Temporary Password</h1>
+        ) : (
+          <h1>Company Portal</h1>
+        )}
+        {!employee && <LoginForm />}
+        {employee?.firstTimeLogin && <ResetPasswordForm />}
       </div>
     </div>
   );

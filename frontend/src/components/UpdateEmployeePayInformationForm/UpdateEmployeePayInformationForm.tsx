@@ -53,6 +53,7 @@ export const UpdateEmployeePayInformationForm: React.FC<
         <Form
           buttonText="Update Employee Pay"
           width="50%"
+          height=""
           action={handleSubmitUpdate}
           error={employeeService.employeeUpdateError}
           errorMessage="Unable to update employee's pay"
