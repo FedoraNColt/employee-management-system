@@ -61,7 +61,10 @@ public class TimeSheetController {
 
     @PostMapping("/data")
     public List<TimeSheet> generateTimeSheetData(@RequestBody GenerateTimeSheetDataRequest request) {
-        return timeSheetService.generateTimeSheetsForPayRollTests(request.employee(), request.manager());
+        // Resolve employees from the DB to avoid FK violations when client sends transient IDs.
+        Employee employee = employeeService.readEmployeeByEmail(request.employee().getEmail());
+        Employee manager = employeeService.readEmployeeByEmail(request.manager().getEmail());
+        return timeSheetService.generateTimeSheetsForPayRollTests(employee, manager);
     }
 
     @ExceptionHandler({TimeSheetDoesNotExistException.class})
