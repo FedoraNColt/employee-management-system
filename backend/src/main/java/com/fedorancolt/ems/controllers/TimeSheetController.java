@@ -7,10 +7,13 @@ import com.fedorancolt.ems.entities.Employee;
 import com.fedorancolt.ems.entities.TimeSheet;
 import com.fedorancolt.ems.entities.TimeSheetStatus;
 import com.fedorancolt.ems.exceptions.TimeSheetDoesNotExistException;
+import com.fedorancolt.ems.services.EmployeeService;
 import com.fedorancolt.ems.services.TimeSheetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +25,12 @@ import java.util.UUID;
 public class TimeSheetController {
 
     private final TimeSheetService timeSheetService;
+    private final EmployeeService employeeService;
 
     @PostMapping("/")
-    public TimeSheet generateOrFetchTimeSheetForEmployee(@RequestBody Employee employee) {
+    public TimeSheet generateOrFetchTimeSheetForEmployee(@AuthenticationPrincipal Jwt jwt) {
+        // Use the authenticated user's email from the JWT subject to avoid stale or spoofed employee payloads.
+        Employee employee = employeeService.readEmployeeByEmail(jwt.getSubject());
         return timeSheetService.createOrReadTimeSheetForEmployee(employee);
     }
 
