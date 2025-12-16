@@ -5,12 +5,14 @@ import java.security.KeyPairGenerator;
 
 public class KeyGeneratorUtil {
 
+    private KeyGeneratorUtil() {
+    }
+
     public static KeyPair generateRsaKey() {
-        KeyPair keyPair = null;
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(2048);
-            keyPair = keyPairGenerator.generateKeyPair();
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
             return  keyPair;
         } catch (Exception e) {
             throw new IllegalArgumentException();

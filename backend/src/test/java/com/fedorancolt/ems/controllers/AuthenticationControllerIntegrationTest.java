@@ -22,18 +22,20 @@ class AuthenticationControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
 
     @Test
-    @DisplayName("Login succeeds and returns employee plus session cookie")
+    @DisplayName("Login succeeds and returns employee plus tokens")
     void loginWithValidCredentialsReturnsEmployee() throws Exception {
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"adminemployee@company.com\",\"password\":\"pass\"}"))
+                        .content("{\"email\":\"admin.employee@company.com\",\"password\":\"pass\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("adminemployee@company.com"))
-                .andExpect(jsonPath("$.firstName").value("admin"))
-                .andExpect(jsonPath("$.lastName").value("employee"));
-//                .andExpect(cookie().exists("JSESSIONID"));
+                .andExpect(jsonPath("$.employee.email").value("admin.employee@company.com"))
+                .andExpect(jsonPath("$.employee.firstName").value("admin"))
+                .andExpect(jsonPath("$.employee.lastName").value("employee"))
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andExpect(jsonPath("$.refresh").isNotEmpty());
     }
 
     @Test
@@ -41,7 +43,7 @@ class AuthenticationControllerIntegrationTest {
     void loginWithInvalidCredentialsReturnsForbidden() throws Exception {
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"adminemployee@company.com\",\"password\":\"wrong\"}"))
+                        .content("{\"email\":\"admin.employee@company.com\",\"password\":\"wrong\"}"))
                 .andExpect(status().isForbidden())
                 .andExpect(content().string(containsString("Invalid email or password")));
     }
@@ -51,15 +53,16 @@ class AuthenticationControllerIntegrationTest {
     void registerEmployeeWhenAuthenticatedAsAdmin() throws Exception {
         var loginResult = mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"adminemployee@company.com\",\"password\":\"pass\"}"))
+                        .content("{\"email\":\"admin.employee@company.com\",\"password\":\"pass\"}"))
                 .andExpect(status().isOk())
                 .andReturn();
 
-        MockHttpSession session = (MockHttpSession) loginResult.getRequest().getSession(false);
-        assertThat(session).isNotNull();
+        String token = objectMapper.readTree(loginResult.getResponse().getContentAsString())
+                .path("token").asText();
+        assertThat(token).isNotBlank();
 
         mockMvc.perform(post("/auth/register")
-                        .session(session)
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -69,13 +72,13 @@ class AuthenticationControllerIntegrationTest {
                                   "phoneNumber": "9998887777",
                                   "payType": "HOURLY",
                                   "payAmount": 30.00,
-                                  "reportsTo": "manageremployee@company.com"
+                                  "reportsTo": "manager.employee@company.com"
                                 }
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.employee.email").value("new.hire@company.com"))
                 .andExpect(jsonPath("$.employee.employeeType").value("EMPLOYEE"))
-                .andExpect(jsonPath("$.employee.reportsTo.email").value("manageremployee@company.com"))
+                .andExpect(jsonPath("$.employee.reportsTo.email").value("manager.employee@company.com"))
                 .andExpect(jsonPath("$.temporaryPassword").isNotEmpty());
     }
 
@@ -94,6 +97,6 @@ class AuthenticationControllerIntegrationTest {
                                   "payAmount": 20.00
                                 }
                                 """))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 }

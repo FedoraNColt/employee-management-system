@@ -6,8 +6,6 @@ import com.fedorancolt.ems.exceptions.InvalidCredentialsException;
 import com.fedorancolt.ems.exceptions.RevalidateTokenException;
 import com.fedorancolt.ems.services.AuthenticationService;
 import com.fedorancolt.ems.services.TokenService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +21,8 @@ public class AuthenticationController {
     private final TokenService tokenService;
 
     @PostMapping("/login")
-    public LoginResponse loginEmployee(
-            @RequestBody LoginRequest loginRequest,
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) {
-        return authenticationService.loginEmployee(loginRequest.email(), loginRequest.password(), request, response);
+    public LoginResponse loginEmployee(@RequestBody LoginRequest loginRequest) {
+        return authenticationService.loginEmployee(loginRequest.email(), loginRequest.password());
     }
 
     @GetMapping("/refresh/{token}")

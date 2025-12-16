@@ -1,5 +1,6 @@
 package com.fedorancolt.ems.repositories;
 
+import com.fedorancolt.ems.entities.Employee;
 import com.fedorancolt.ems.entities.PayStub;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -17,5 +18,5 @@ public interface PayStubRepository extends JpaRepository<PayStub, UUID> {
                                                                 Instant createTimeStampStart,
                                                                 Instant createTimeStampEnd);
 
-    boolean existsByEmployeeAndPayDate(com.fedorancolt.ems.entities.Employee employee, LocalDate payDate);
+    boolean existsByEmployeeAndPayDate(Employee employee, LocalDate payDate);
 }

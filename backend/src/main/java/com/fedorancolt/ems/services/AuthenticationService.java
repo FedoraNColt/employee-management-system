@@ -32,10 +32,10 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
-    public LoginResponse loginEmployee(String email, String password, HttpServletRequest request, HttpServletResponse response) {
+    public LoginResponse loginEmployee(String email, String password) {
         try {
             UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken.unauthenticated(email, password);
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            authenticationManager.authenticate(authenticationToken);
 
             Employee employee = employeeService.readEmployeeByEmail(email);
             String jwtToken = tokenService.generateToken(employee);
