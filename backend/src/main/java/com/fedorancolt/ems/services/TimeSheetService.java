@@ -89,6 +89,10 @@ public class TimeSheetService {
 
     public TimeSheet updateTimeSheetStatus(UUID timeSheetId, TimeSheetStatus status) {
         TimeSheet timeSheet = retrieveTimeSheetByIdOrThrowTimeSheetDoesNotException(timeSheetId);
+        // Prevent updates to already paid timesheets.
+        if (timeSheet.getStatus() == TimeSheetStatus.PAID) {
+            return timeSheet;
+        }
         timeSheet.setStatus(status);
         return timeSheetRepository.save(timeSheet);
     }
@@ -100,6 +104,9 @@ public class TimeSheetService {
             String message) {
         TimeSheet timeSheet = retrieveTimeSheetByIdOrThrowTimeSheetDoesNotException(timeSheetId);
 
+        if (timeSheet.getStatus() == TimeSheetStatus.PAID) {
+            return timeSheet;
+        }
         timeSheet.setStatus(status);
         timeSheet.setApprover(approver);
         timeSheet.setMessage(message);
