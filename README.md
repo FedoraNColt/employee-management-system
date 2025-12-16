@@ -7,7 +7,7 @@ Monorepo for a simple employee management platform with a Spring Boot backend an
 - `frontend/` – React + TypeScript UI (Vite).
 
 ## Quick Start
-1) Start the backend (port 8000, in‑memory H2):
+1) Start the backend (port 8000, in‑memory H2 seeded with admin/manager/employee):
    ```bash
    cd backend
    ./mvnw spring-boot:run
@@ -18,11 +18,18 @@ Monorepo for a simple employee management platform with a Spring Boot backend an
    npm install
    npm run dev
    ```
-   The UI expects the API at `http://localhost:8000` (configured in `frontend/src/services/apiClient.ts`).
+   The UI points to `http://localhost:8000` (see `src/services/useAxios.ts` / `GlobalContext.tsx`).
+
+3) Run backend tests:
+   ```bash
+   cd backend
+   ./mvnw test
+   ```
 
 ## Development Notes
-- Backend uses H2 in-memory DB with seed data; restart resets state.
-- Update routes/roles in `backend/src/main/java/com/fedorancolt/ems/configs/SecurityConfiguration.java`.
-- Frontend routing lives in `frontend/src/App.tsx` with portal pages under `frontend/src/pages`.
+- Backend uses H2 in-memory DB with seed data; restart resets state. Tokens are JWT (5 min) + refresh (24h, rotated per use).
+- Auth endpoints: `POST /auth/login` returns `{ employee, token, refresh }`; `GET /auth/refresh/{token}` issues new access + rotated refresh.
+- Route protection lives in `backend/src/main/java/com/fedorancolt/ems/configs/SecurityConfiguration.java`.
+- Frontend routing lives in `frontend/src/App.tsx` and `src/pages`; auth state is in `src/services/GlobalContext.tsx`.
 
 See `backend/README.md` and `frontend/README.md` for deeper details.
