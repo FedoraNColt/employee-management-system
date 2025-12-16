@@ -4,6 +4,7 @@ import com.fedorancolt.ems.entities.PayStub;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,4 +16,6 @@ public interface PayStubRepository extends JpaRepository<PayStub, UUID> {
     List<PayStub> findAllByEmployeeIdAndCreatedTimeStampBetween(UUID employeeId,
                                                                 Instant createTimeStampStart,
                                                                 Instant createTimeStampEnd);
+
+    boolean existsByEmployeeAndPayDate(com.fedorancolt.ems.entities.Employee employee, LocalDate payDate);
 }

@@ -49,9 +49,10 @@ public class PayStubService {
         List<PayrollPreviewDTO> payrollPreviewDTOs = new ArrayList<>();
         List<Employee> employees = employeeService.readAllEmployees();
         LocalDate payRollDate = LocalDate.now();
-        
+
         List<PayrollPreviewDTO> salaryPayrollPreview = employees.stream()
                 .filter(employee -> employee.getPayInformation().getPayType().equals(PayType.SALARY))
+                .filter(employee -> !payStubRepository.existsByEmployeeAndPayDate(employee, payRollDate))
                 .map(employee -> {
                     BigDecimal pay = employee.getPayInformation().getPayAmount()
                             .divide(BigDecimal.valueOf(52.0), 2, RoundingMode.HALF_UP)
@@ -90,6 +91,7 @@ public class PayStubService {
 
         List<PayStub> salaryStubs = employees.stream()
                 .filter(employee -> employee.getPayInformation().getPayType().equals(PayType.SALARY))
+                .filter(employee -> !payStubRepository.existsByEmployeeAndPayDate(employee, payRollDate))
                 .map(salaried -> {
                     BigDecimal pay = salaried.getPayInformation().getPayAmount()
                             .divide(BigDecimal.valueOf(52.0), 2, RoundingMode.HALF_UP)
